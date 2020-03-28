@@ -10,17 +10,17 @@ if os.name != 'nt':
     from daemon import pidfile
 
 from secret import token
-from telegram import Telegram
+from telegram_bot import Telegram
 
 
 if __name__ == "__main__":
     telegram = Telegram(token)
 
     if os.name == 'nt':
-        telegram.run()
+        telegram.start()
     else:
         pidfile = pidfile.TimeoutPIDLockFile('covidDaemon.pid')
         err = open('err.txt', 'w+')
         out = open('out.txt', 'w+')
         with daemon.DaemonContext(pidfile=pidfile, working_directory='./', stderr=err, stdout=out):
-            telegram.run()
+            telegram.start()
