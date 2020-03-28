@@ -37,7 +37,6 @@ class Telegram:
         info_handler = CommandHandler('info', self._info)
         self.dispatcher.add_handler(info_handler)
 
-
     def start(self):
         self.updater.start_polling()
         self.updater.idle()
@@ -54,15 +53,14 @@ class Telegram:
             countries(self.image_path)
             # italy(self.image_path)
             self.last_update = datetime.now()
+            self.compute_new = False
 
         for photo in self.image_path.glob('*.png'):
             if str(photo) in self.id_image:
                 context.bot.send_photo(chat_id=update.effective_chat.id,
-                                                                   photo=self.id_image[str(photo)],
-                                                                   caption="Updated on: {}".format(self.last_update))
+                                       photo=self.id_image[str(photo)],
+                                       caption="Updated on: {}".format(self.last_update))
             else:
                 self.id_image[str(photo)] = context.bot.send_photo(chat_id=update.effective_chat.id,
                                                                    photo=open(str(photo), 'rb'),
-                                                                   caption="Updated on: {}".format(self.last_update))
-
-
+                                                                   caption="Updated on: {}".format(self.last_update))['photo'][-1]['file_id']
