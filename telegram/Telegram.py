@@ -16,12 +16,13 @@ class Telegram:
         self.token = token
         self.id_image = {}
         self.compute_new = True
+        self.last_update = datetime.now()
 
         italy_url = 'https://raw.githubusercontent.com/pcm-dpc/COVID-19/master/dati-andamento-nazionale/dpc-covid19-ita-andamento-nazionale.csv'
         confirmed_url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv'
         death_url = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv'
 
-        self.images = []
+        self.images = {}
         self.all_url = {"Italy": italy_url, "confirmed": confirmed_url, "death": death_url}
 
         self.data = {}
@@ -31,7 +32,7 @@ class Telegram:
         self.createFigures()
 
     def getData(self):
-
+        self.last_update = datetime.now()
         ################## ITALY
         data_it = []
         csv_file = request.urlopen(self.all_url["Italy"]).read().decode('utf8').split("\n")
@@ -68,7 +69,7 @@ class Telegram:
         plt.xlabel('Days')
         plt.ylabel('Infected')
         plt.savefig('italy_hubei.png', dpi=300, bbox_inches='tight')
-        self.images.append('italy_hubei.png')
+        self.images['Italy/Hubey'] = 'italy_hubei.png'
 
     def run(self):
         bot = telepot.Bot(self.token)
@@ -76,16 +77,20 @@ class Telegram:
         def handle(msg):
             content_type, chat_type, chat_id = telepot.glance(msg)
             if content_type == 'text':
+
+                if self.last_update < datetime.now() - timedelta(hours=6):
+                    self.getData()
+                    self.createFigures()
+                    self.last_update = datetime.now()
+
                 name = msg["from"]["first_name"]
                 txt = msg['text']
                 if '/info' in txt:
                     bot.sendMessage(chat_id, 'Hi, {}!'.format(name))
-                    for photo in self.images:
-                        bot.sendPhoto(chat_id=chat_id, photo=open(photo, 'rb'))
+                    for photo in self.images.keys():
+                        bot.sendPhoto(chat_id=chat_id, photo=open(self.images[photo], 'rb'),
+                                      caption="Updated on: {}".format(self.last_update))
 
-
-                elif '/set_expedition' in txt:
-                    params = txt.split()[1:]
 
         MessageLoop(bot, handle).run_as_thread()
         print('listening')
