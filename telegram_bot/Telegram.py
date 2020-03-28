@@ -1,6 +1,6 @@
 import telegram
-from requests import get
 import urllib.request as request
+from pathlib import Path
 
 from telegram.ext import Updater, CommandHandler
 import logging
@@ -30,6 +30,8 @@ class Telegram:
         self.data = {}
 
         ## init
+        self.image_path = Path('images/')
+        self.image_path.mkdir(parents=True, exist_ok=True)
         self._getData()
         self._createFigures()
 
@@ -42,6 +44,7 @@ class Telegram:
         self.dispatcher.add_handler(start_handler)
         info_handler = CommandHandler('info', self._info)
         self.dispatcher.add_handler(info_handler)
+
 
     def start(self):
         self.updater.start_polling()
@@ -60,8 +63,8 @@ class Telegram:
             self._createFigures()
             self.last_update = datetime.now()
 
-        for photo in self.images.keys():
-            context.bot.send_photo(chat_id=update.effective_chat.id, photo=open(self.images[photo], 'rb'),
+        for photo in self.image_path.glob('*.png'):
+            context.bot.send_photo(chat_id=update.effective_chat.id, photo=open(str(photo), 'rb'),
                                    caption="Updated on: {}".format(self.last_update))
 
     def _getData(self):
@@ -130,8 +133,7 @@ class Telegram:
         plt.legend()
         plt.xlabel('Days')
         plt.ylabel('Infected')
-        plt.savefig('images/italy_hubei.png', dpi=300, bbox_inches='tight')
-        self.images['Italy/Hubey'] = 'images/italy_hubei.png'
+        plt.savefig(self.image_path / 'italy_hubei.png', dpi=300, bbox_inches='tight')
 
 
         ######### countries
@@ -170,5 +172,4 @@ class Telegram:
         ax[1].set_ylim(0.9, 20000)
         ax[1].legend(loc=2)
 
-        plt.savefig('images/countries.png', dpi=300, bbox_inches='tight')
-        self.images['countries'] = 'images/countries.png'
+        plt.savefig(self.image_path / 'countries.png', dpi=300, bbox_inches='tight')
