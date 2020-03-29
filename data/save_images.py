@@ -12,10 +12,11 @@ def europe(path: Path):
     tlist = []
 
     csv_file = request.urlopen(url).read().decode('utf8').split("\n")
-    csv_reader = csv.DictReader(csv_file)
+
 
     for country in clist:
         temp = []
+        csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
             if row['Country/Region'] == country:
                 temp.append(np.array(list(row.values())[4:]).astype('int'))
@@ -26,10 +27,11 @@ def europe(path: Path):
     dlist = []
 
     csv_file = request.urlopen(url).read().decode('utf8').split("\n")
-    csv_reader = csv.DictReader(csv_file)
+
 
     for country in clist:
         temp = []
+        csv_reader = csv.DictReader(csv_file)
         for row in csv_reader:
             if row['Country/Region'] == country:
                 temp.append(np.array(list(row.values())[4:]).astype('int'))
