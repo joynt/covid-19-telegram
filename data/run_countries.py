@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 import json
 from collections import defaultdict
@@ -9,9 +11,9 @@ from data.utils import compute_growth_rate
 
 ALIGN_AROUND = 400 # cases
 
-def countries(path):
+def countries(path: Path, default_countries: list):
     # Compute the number of cases for each country
-    confirmed = compute_countries_confirmed_cases()
+    confirmed = compute_countries_confirmed_cases(default_countries)
 
     # Compute maximum number of cases we can align around: min (ALIGN_AROUND, x)
     # Take the second biggest one

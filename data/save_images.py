@@ -13,7 +13,6 @@ def europe(path: Path):
 
     csv_file = request.urlopen(url).read().decode('utf8').split("\n")
 
-
     for country in clist:
         temp = []
         csv_reader = csv.DictReader(csv_file)
@@ -27,7 +26,6 @@ def europe(path: Path):
     dlist = []
 
     csv_file = request.urlopen(url).read().decode('utf8').split("\n")
-
 
     for country in clist:
         temp = []
