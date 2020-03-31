@@ -100,6 +100,7 @@ def plot_cases(confirmed, align_indexes, align_around, path):
     ax[5].grid()
 
     plt.savefig(path / 'countries_cases.png', dpi=300, bbox_inches='tight')
+    plt.close(fig)
 
 
 def plot_growth(growths, align_indexes, align_around, path):
@@ -181,3 +182,4 @@ def plot_growth(growths, align_indexes, align_around, path):
     ax[5].grid()
 
     plt.savefig(path / 'countries_gr.png', dpi=300, bbox_inches='tight')
+    plt.close(fig)

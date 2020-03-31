@@ -11,6 +11,7 @@ if os.name != 'nt':
     from daemon import pidfile
 
 from secret import dev_token as token
+from secret import token
 from telegram_bot import Telegram
 from datetime import datetime
 

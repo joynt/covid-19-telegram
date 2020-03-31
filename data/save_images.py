@@ -70,3 +70,4 @@ def europe(path: Path):
     ax[1].legend(loc=2)
 
     plt.savefig(path / 'countries.png', dpi=300, bbox_inches='tight')
+    plt.close(fig)
