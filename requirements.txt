@@ -1,2 +1,11 @@
+pandas
+numpy
 telegram
-numpy matplotlib telepot requests python-daemon urllib3==1.24.1 tinydb python-telegram-bot
+numpy
+matplotlib
+requests
+python-daemon
+urllib3==1.24.1
+tinydb
+python-telegram-bot
+descartes

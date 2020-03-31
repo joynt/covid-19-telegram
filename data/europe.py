@@ -69,5 +69,5 @@ def europe(path: Path):
     ax[1].set_ylim(0.9, 20000)
     ax[1].legend(loc=2)
 
-    plt.savefig(path / 'countries.png', dpi=300, bbox_inches='tight')
+    plt.savefig(path / 'countries.png', dpi=400, bbox_inches='tight')
     plt.close(fig)

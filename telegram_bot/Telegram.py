@@ -14,7 +14,7 @@ import logging
 
 from datetime import timedelta, datetime
 
-from data import europe, countries
+from data import europe, countries, world
 from secret import dev
 from .keyboards import get_command_markup
 
@@ -74,7 +74,8 @@ class Telegram:
             self.logger.info("START UPDATING IMAGES")
             countries(self.image_path, COUNTRIES)
             europe(self.image_path)
-            temp = {"last_update": last_update - timedelta(1),
+            world(self.image_path)
+            temp = {"last_update": last_update,
                     "media": [path for path in self.image_path.glob("*.png")],
                     "updating": False}
             context.bot_data.update(temp)
