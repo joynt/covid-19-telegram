@@ -63,20 +63,22 @@ class Telegram:
     def _update_job(self, context: telegram.ext.CallbackContext):
         self.logger.info("Check updated data")
         data = requests.get("https://pomber.github.io/covid19/timeseries.json").json()
-        last_update = data[list(data.keys())[0]][-1]['date']
-        last_update = datetime.strptime(last_update, '%Y-%m-%d')
+        last_update_str = data[list(data.keys())[0]][-1]['date']
+        last_update = datetime.strptime(last_update_str, '%Y-%m-%d')
         try:
             update = last_update > context.bot_data["last_update"]
         except KeyError:
             update = True
         if update:
+            path = self.image_path / last_update_str
+            path.mkdir(parents=True, exist_ok=True)
             context.bot_data["updating"] = True
             self.logger.info("START UPDATING IMAGES")
-            countries(self.image_path, COUNTRIES)
-            europe(self.image_path)
-            world(self.image_path)
+            countries(path, COUNTRIES)
+            europe(path)
+            world(path)
             temp = {"last_update": last_update,
-                    "media": [path for path in self.image_path.glob("*.png")],
+                    "media": [p for p in path.glob('*.png')],
                     "updating": False}
             context.bot_data.update(temp)
             self.logger.info("END UPDATING IMAGES")
@@ -123,8 +125,10 @@ class Telegram:
             # open file otherwise
             except KeyError:
                 images = context.bot_data["media"]
+                files = [open(str(image), "rb") for image in images]
                 responses = context.bot.send_media_group(chat_id=update.effective_chat.id,
-                                                         media=[InputMediaPhoto(open(str(image), "rb")) for image in images])
+                                                         media=[InputMediaPhoto(file) for file in files])
+                [file.close() for file in files]
                 context.bot_data['ids'] = [response['photo'][-1]['file_id'] for response in responses]
 
             context.bot.send_message(chat_id=update.effective_chat.id,
