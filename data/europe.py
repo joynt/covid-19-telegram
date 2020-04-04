@@ -52,6 +52,7 @@ def europe(path: Path):
     ax[0].set_xlabel('Days (country-wide lockdown at the vertical line)')
     ax[0].set_ylabel('Infected')
     ax[0].set_yscale('log')
+    ax[0].set_ylim(1)
     ax[0].set_xlim(10)
     ax[0].legend(loc=2)
 
@@ -64,6 +65,7 @@ def europe(path: Path):
     ax[1].set_xlabel('Days (country-wide lockdown at the vertical line)')
     ax[1].set_ylabel('Deaths')
     ax[1].set_yscale('log')
+    ax[0].set_ylim(1)
     ax[0].set_xlim(10)
     ax[1].legend(loc=2)
 

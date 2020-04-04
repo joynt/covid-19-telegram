@@ -53,7 +53,7 @@ class Telegram:
         self.dispatcher.add_handler(info_handler)
 
         ## dev handlers
-        restart_handler = CommandHandler('restart', self._restart, filters=Filters.chat(chat_id=[dev]))
+        restart_handler = CommandHandler('restart', self._restart, filters=Filters.user(username='@{}'.format(dev)))
         self.dispatcher.add_handler(restart_handler)
 
     def start(self):
