@@ -65,8 +65,8 @@ def europe(path: Path):
     ax[1].set_xlabel('Days (country-wide lockdown at the vertical line)')
     ax[1].set_ylabel('Deaths')
     ax[1].set_yscale('log')
-    ax[0].set_ylim(1)
-    ax[0].set_xlim(10)
+    ax[1].set_ylim(1)
+    ax[1].set_xlim(10)
     ax[1].legend(loc=2)
 
     plt.savefig(path / 'countries.png', dpi=400, bbox_inches='tight')
