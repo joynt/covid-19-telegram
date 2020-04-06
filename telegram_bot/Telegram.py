@@ -52,15 +52,19 @@ class Telegram:
         info_handler = CommandHandler('info', self._info)
         self.dispatcher.add_handler(info_handler)
 
+
         ## dev handlers
-        restart_handler = CommandHandler('restart', self._restart, filters=Filters.user(username='@{}'.format(dev)))
+        filters = Filters.user(username='@{}'.format(dev))
+        restart_handler = CommandHandler('restart', self._restart, filters=filters)
         self.dispatcher.add_handler(restart_handler)
+        force_update_handler = CommandHandler('update', self._force_update, filters = filters)
+        self.dispatcher.add_handler(force_update_handler)
 
     def start(self):
         self.updater.start_polling()
         self.updater.idle()
 
-    def _update_job(self, context: telegram.ext.CallbackContext):
+    def _update_job(self, context: telegram.ext.CallbackContext, force_update=False):
         self.logger.info("Check updated data")
         data = requests.get("https://pomber.github.io/covid19/timeseries.json").json()
         last_update_str = data[list(data.keys())[0]][-1]['date']
@@ -69,19 +73,28 @@ class Telegram:
             update = last_update > context.bot_data["last_update"]
         except KeyError:
             update = True
-        if update:
+        if update or force_update:
             path = self.image_path / last_update_str
             path.mkdir(parents=True, exist_ok=True)
+            time = datetime.now()
+            with open(path / (time.strftime("%Y-%m-%d_%H-%M") + ".json"), "w") as json:
+                json.write(str(data))
             context.bot_data["updating"] = True
             self.logger.info("START UPDATING IMAGES")
             countries(path, COUNTRIES)
             europe(path)
             world(path)
-            temp = {"last_update": last_update,
+            temp = {"last_update": time,
                     "media": [p for p in path.glob('*.png')],
                     "updating": False}
             context.bot_data.update(temp)
             self.logger.info("END UPDATING IMAGES")
+
+    def _force_update(self, update, context):
+        context.bot.send_message(chat_id=update.effective_chat.id,
+                                 text="Forcing update of images",
+                                 reply_markup=get_command_markup())
+        self._update_job(context, force_update=True)
 
     def _info(self, update, context):
         context.bot.send_message(chat_id=update.effective_chat.id,
@@ -138,7 +151,8 @@ class Telegram:
             context.chat_data["last_update"] = context.bot_data["last_update"]
         else:
             context.bot.send_message(chat_id=update.effective_chat.id,
-                                     text="You have the latest plot of {}".format(context.bot_data["last_update"].strftime("%d %b %Y")),
+                                     text="You have the latest plot of {}".format(
+                                         context.bot_data["last_update"].strftime("%d %b %Y")),
                                      reply_markup=get_command_markup())
             self.logger.info("IMAGES ALREADY SENT")
 
