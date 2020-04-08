@@ -1,3 +1,5 @@
+import os
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -99,7 +101,11 @@ def plot_cases(confirmed, align_indexes, align_around, path):
     ax[5].set_xlabel(f"Days since cases are around {align_around}")
     ax[5].grid()
 
-    plt.savefig(path / 'countries_cases.png', dpi=400, bbox_inches='tight')
+    save = path / 'countries_cases.png'
+    if save.exists():
+        os.remove(str(save))
+
+    plt.savefig(save, dpi=400, bbox_inches='tight')
     plt.close(fig)
 
 
@@ -181,5 +187,9 @@ def plot_growth(growths, align_indexes, align_around, path):
     ax[5].set_xlabel(f"Days since cases are around {align_around}")
     ax[5].grid()
 
-    plt.savefig(path / 'countries_gr.png', dpi=400, bbox_inches='tight')
+    save = path / 'countries_gr.png'
+    if save.exists():
+        os.remove(str(save))
+
+    plt.savefig(save, dpi=400, bbox_inches='tight')
     plt.close(fig)

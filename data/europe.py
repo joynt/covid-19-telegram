@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import urllib.request as request
 import csv
@@ -69,5 +71,9 @@ def europe(path: Path):
     ax[1].set_xlim(10)
     ax[1].legend(loc=2)
 
-    plt.savefig(path / 'countries.png', dpi=400, bbox_inches='tight')
+    save = path / 'countries.png'
+    if save.exists():
+        os.remove(str(save))
+
+    plt.savefig(save, dpi=400, bbox_inches='tight')
     plt.close(fig)

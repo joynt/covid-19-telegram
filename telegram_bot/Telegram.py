@@ -74,7 +74,7 @@ class Telegram:
         except KeyError:
             update = True
         if update or force_update:
-            path = self.image_path / last_update_str
+            path = self.image_path
             path.mkdir(parents=True, exist_ok=True)
             time = datetime.now()
             with open(path / (time.strftime("%Y-%m-%d_%H-%M") + ".json"), "w") as json:
@@ -87,6 +87,7 @@ class Telegram:
             temp = {"last_update": time,
                     "media": [p for p in path.glob('*.png')],
                     "updating": False}
+            context.bot_data.clear()
             context.bot_data.update(temp)
             self.logger.info("END UPDATING IMAGES")
 
@@ -95,6 +96,9 @@ class Telegram:
                                  text="Forcing update of images",
                                  reply_markup=get_command_markup())
         self._update_job(context, force_update=True)
+        context.bot.send_message(chat_id=update.effective_chat.id,
+                                 text="Update finished",
+                                 reply_markup=get_command_markup())
 
     def _info(self, update, context):
         context.bot.send_message(chat_id=update.effective_chat.id,

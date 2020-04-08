@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import geopandas as gpd
@@ -37,5 +38,10 @@ def world(path: Path):
     # add the colorbar to the figure
     cbar = fig.colorbar(sm, fraction=0.025, pad=0)
     cbar.ax.set_yticklabels([1, 10, 100, 1000, 10000, 100000, 1000000])
-    plt.savefig(path / 'world.png', dpi=400, bbox_inches='tight')
+
+    save = path / 'world.png'
+    if save.exists():
+        os.remove(str(save))
+
+    plt.savefig(save, dpi=400, bbox_inches='tight')
     plt.close(fig)
